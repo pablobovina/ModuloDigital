@@ -6,7 +6,6 @@ Modulo de control del PP2
 """
 
 from Usb import Usb
-from time import sleep
 from secuence import Secuence
 
 
@@ -28,6 +27,7 @@ class Pp2(object):
         self.cmd = []
         self.delay = delay
         self.secuence = secuence
+        self.interfaz = Usb()
 
     def upload_program(self):
 
@@ -44,6 +44,8 @@ class Pp2(object):
             self.cmd.append((instruction, 4))
             self.cmd.append((['T', chr(0x52), chr(0x00)], 4))
 
+        self._execute()
+
         print "pp2 upload program"
         self.requested_operations.append(self.op_codes['upload'])
         self.last_request = self.op_codes['upload']
@@ -55,6 +57,7 @@ class Pp2(object):
 
         # instruccion disparo de secuencia de pulsos
         self.cmd.append((['D', chr(0x50), chr(0x00), chr(0x80)], 4))
+        self._execute()
 
         print "pp2 trigger program"
         self.requested_operations.append(self.op_codes['trigger'])
@@ -63,17 +66,13 @@ class Pp2(object):
 
         return True
 
-    def execute(self):
+    def _execute(self):
         """ejecutar pila de instucciones del pp2"""
 
-        usb = Usb()
-        for c in self.cmd:
-            response = usb.request(*c)
-            print response.value
-            sleep(self.delay)
+        data = self.interfaz.execute(self.delay, self.cmd)
 
         print "pp2 execute"
         self.requested_operations.append(self.op_codes['execute'])
         self.last_request = self.op_codes['execute']
         self.status = self.op_codes['execute']
-        return True
+        return data

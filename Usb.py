@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import ctypes
 import logging
+from time import sleep
+
 
 class Usb:
     vid = "vid_04d8&pid_000c"
@@ -15,7 +17,6 @@ class Usb:
         logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
                             level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p')
         pass
-
 
     def request(self, data, data_len):
         """
@@ -55,4 +56,30 @@ class Usb:
         logging.info("enviando linea: "+data.__str__())
         data = "".join(data)
         logging.info("bytes enviados "+str(len(data)) + " '" + data + "'")
-        return d
+        return data
+
+    def execute(self, delay, requests):
+        """ejecutar pila de instucciones del AD"""
+        data = []
+        for c in requests:
+            response = self.request(*c)
+            data.append(response.value)
+            sleep(delay)
+        return data
+
+    def execute_until(self, delay, data, amount, pred):
+        """envia data hasta satisfacer pred
+            para y retorna true si se satifacio pred antes de llegar al numero maximo de intentos
+            caso contrario retorna false
+        """
+        intentos = 0
+        flag = False
+        while intentos < amount:
+            response = self.request(*data)
+            if pred(response.value):
+                intentos = amount
+                flag = True
+            else:
+                intentos += 1
+                sleep(delay)
+        return flag

@@ -6,7 +6,6 @@ Modulo de control del DDS2
 """
 
 from Usb import Usb
-from time import sleep
 
 
 class Dds2(object):
@@ -26,6 +25,7 @@ class Dds2(object):
         self.status = None
         self.cmd = []
         self.delay = delay
+        self.interfaz = Usb()
 
     def reset(self):
         """lista de comandos para un master reset de dds2"""
@@ -44,6 +44,7 @@ class Dds2(object):
         # cargar un registro 20 del DDS2 con 00
         # Shape keying deshabilitado
         self.cmd.append((['k', chr(0x75), chr(0x20), chr(0x78), chr(0x00)], 4))
+        self._execute()
         
         print "dds2 reset"
         self.requested_operations.append(self.op_codes['reset'])
@@ -61,6 +62,7 @@ class Dds2(object):
         self.cmd.append((['k', chr(0x75), chr(0x1d), chr(0x78), chr(0x10)], 4))
         # modo dds con fases
         self.cmd.append((['b', chr(0x71), chr(0x05)], 4))
+        self._execute()
 
         print "dds2 on"
         self.requested_operations.append(self.op_codes['on'])
@@ -78,6 +80,7 @@ class Dds2(object):
         self.cmd.append((['k', chr(0x75), chr(0x1d), chr(0x78), chr(0x17)], 4))
         # pulso UDCLK
         self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
+        self._execute()
 
         print "dds2 off"
         self.requested_operations.append(self.op_codes['off'])
@@ -111,6 +114,7 @@ class Dds2(object):
         self.cmd.append((['k', chr(0x75), chr(0x09), chr(0x78), chr(w1_0)], 4))
         # pulso UDCLK actualiza registro de trabajo
         self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
+        self._execute()
 
         print "dds2 set freq"
         self.requested_operations.append(self.op_codes['freq'])
@@ -131,6 +135,8 @@ class Dds2(object):
                           chr(0x70), chr(0x01), chr(0x74), chr(fs1_l)], 4))
         # modo PC
         self.cmd.append((['b', chr(0x71), chr(0x00)], 4))
+        self._execute()
+
         print "dds2 set phase"
         self.requested_operations.append(self.op_codes['phase'])
         self.last_request = self.op_codes['phase']
@@ -138,19 +144,13 @@ class Dds2(object):
 
         return True
 
-    def execute(self):
+    def _execute(self):
         """ejecutar pila de instucciones del dds2"""
 
-        usb = Usb()
-        for c in self.cmd:
-            response = usb.request(*c)
-            print response.value
-            sleep(self.delay)
+        data = self.interfaz.execute(self.delay, self.cmd)
 
         print "dds2 execute"
-        self.requested_operations.append(self.op_codes['execute'])
+        self.requested_operations = []
         self.last_request = self.op_codes['execute']
         self.status = self.op_codes['execute']
-        return True
-
-
+        return data
