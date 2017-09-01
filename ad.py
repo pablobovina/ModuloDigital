@@ -18,7 +18,7 @@ class Ad(object):
     channels = {0x08: "canalB", 0x0A: "canalA", 0x09: "canalAB"}
     bloq_base = {16: 0x00, 32: 0x10, 64: 0x20, 128: 0x30, 256: 0x40, 512: 0x50, 1024: 0x60, 2048: 0x70}
 
-    def __init__(self, mod_id=1, delay=5, amount=200,  bloqnum=16, inter_ts=1000000, channel=True):
+    def __init__(self, mod_id=1, delay=5, amount=200,  bloqnum=16, inter_ts=1000000, channel=2):
         """
             id: entero, identificador de la instancia de dds2
             delay: en milisegundos, intervalo de tiempo entre comandos
