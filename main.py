@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from dds2 import Dds2
 from ad import Ad
 from pp2 import Pp2
@@ -38,23 +41,23 @@ def main():
     # 1 b
     # 2 a y b
 
-    # creo secuencia
+    # creo secuencia solo adquisicion
     pulse_secuence = Secuence(id_exp)
     pattern = '0000000000010000'
     pulse_secuence.cont(pattern, delta)
     pulse_secuence.end()
     # cargo secuencia
-    u_pp2 = Pp2(secuence=pulse_secuence)
+    u_pp2 = Pp2(delay=0, secuence=pulse_secuence)
     u_pp2.upload_program()
     # configuro frecuencia y fase
-    u_dds2 = Dds2()
+    u_dds2 = Dds2(delay=0)
     u_dds2.reset()
     u_dds2.deactivate()
     u_dds2.freq(freq)
     u_dds2.phase(phase)
     u_dds2.activate()
     # configuro el AD
-    u_ad = Ad(bloqnum=n_bloqs, inter_ts=ts, channel=2)
+    u_ad = Ad(delay=0, bloqnum=n_bloqs, inter_ts=ts, channel=2)
     # disparo secuencia de pulsos
     u_pp2.trigger_program()
     # obtengo datos de los canales del AD

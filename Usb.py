@@ -12,6 +12,7 @@ class Usb:
     selection = 0
     write_delay = 5
     read_delay = 5
+    debug = False
 
     def __init__(self):
         logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
@@ -53,17 +54,21 @@ class Usb:
         return receive_data
 
     def request_fake(self, data, data_len):
-        logging.info("enviando linea: "+data.__str__())
+        #logging.info("enviando linea: "+data.__str__())
         data = "".join(data)
-        logging.info("bytes enviados "+str(len(data)) + " '" + data + "'")
-        return data
+        #logging.info("bytes enviados "+str(len(data)) + " '" + data + "'")
+        return chr(0x00)*data_len
 
     def execute(self, delay, requests):
         """ejecutar pila de instucciones del AD"""
         data = []
         for c in requests:
-            response = self.request(*c)
-            data.append(response.value)
+            if self.debug:
+                response = self.request_fake(*c)
+                data.append(response)
+            else:
+                response = self.request(*c)
+                data.append(response.value)
             sleep(delay)
         return data
 
