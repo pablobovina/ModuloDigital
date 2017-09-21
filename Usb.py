@@ -10,8 +10,8 @@ class Usb:
     in_pipe = "\\MCHP_EP1"
     api = ctypes.CDLL("./Microchip/mpusbapi.dll")
     selection = 0
-    write_delay = 5
-    read_delay = 5
+    write_delay = 0
+    read_delay = 0
     debug = False
 
     def __init__(self):

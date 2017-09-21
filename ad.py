@@ -178,9 +178,12 @@ class Ad(object):
         op = ['S', chr(0x0b), chr(0x00)]
         while intentos < self.amount:
             response = self.interfaz.request(op, 4)
-            if response.value[0] & 0x01:
+            if ord(response.value[0]) & 0x01:
                 intentos = self.amount
                 flag = True
+                print "caracter esperado para cortar"
+                print response.value
+                print ord(response.value[0])
             else:
                 intentos += 1
                 sleep(self.delay)

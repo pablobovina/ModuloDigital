@@ -6,6 +6,7 @@ from ad import Ad
 from pp2 import Pp2
 from secuence import Secuence
 import csv
+from time import sleep
 
 
 def main():
@@ -13,14 +14,14 @@ def main():
     id_exp = "prueba piloto"
     # nombre del experimento
 
-    freq = 2 * (10 ** 6)
+    freq = 8 * (10 ** 6)
     # numero entre 1 y 200 millones
     # max 200Mhz
 
     phase = 0
     # numero entre 0 y 360
 
-    delta = 25
+    delta = 10000
     # unidades en nsec 25 * 40 = 1000ns = 10us
     # numero entre 6 y 4294967295L == 2**32-1
     # base 40ns
@@ -42,9 +43,17 @@ def main():
     # 2 a y b
 
     # creo secuencia solo adquisicion
+    # pulso 9
     pulse_secuence = Secuence(id_exp)
-    pattern = '0000000000010000'
+    pattern = '0000000100000000'
     pulse_secuence.cont(pattern, delta)
+    # pulso 10
+    pattern = '0000001000000000'
+    pulse_secuence.cont(pattern, delta)
+    #pulso 5 y 16 para cerrar llave
+    pattern = '1000000000010000'
+    pulse_secuence.cont(pattern, delta)
+    #fin
     pulse_secuence.end()
     # cargo secuencia
     u_pp2 = Pp2(delay=0, secuence=pulse_secuence)
@@ -52,17 +61,21 @@ def main():
     # configuro frecuencia y fase
     u_dds2 = Dds2(delay=0)
     u_dds2.reset()
-    u_dds2.deactivate()
     u_dds2.freq(freq)
     u_dds2.phase(phase)
+    print "activamos DDS2"
     u_dds2.activate()
     # configuro el AD
     u_ad = Ad(delay=0, bloqnum=n_bloqs, inter_ts=ts, channel=2)
+    u_ad.configure()
     # disparo secuencia de pulsos
+    print "disparamos programa PP2"
     u_pp2.trigger_program()
     # obtengo datos de los canales del AD
     u_ad.read_channels()
-
+    sleep(5)
+    print "desctivo DDS2"
+    u_dds2.deactivate()
     return u_ad.data_a, u_ad.data_b
 
 
