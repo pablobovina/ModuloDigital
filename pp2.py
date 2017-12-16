@@ -40,7 +40,7 @@ class Pp2(object):
         for c in self.secuence.instructions:
             instruction = ['A', chr(0x51)]
             for b in c:
-                instruction.append(chr(b))
+                instruction.append(chr(int(b, 2)))
             self.cmd.append((instruction, 4))
             self.cmd.append((['T', chr(0x52), chr(0x00)], 4))
 

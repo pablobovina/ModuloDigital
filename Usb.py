@@ -10,8 +10,8 @@ class Usb:
     in_pipe = "\\MCHP_EP1"
     api = ctypes.CDLL("./Microchip/mpusbapi.dll")
     selection = 0
-    write_delay = 5
-    read_delay = 5
+    write_delay = 0
+    read_delay = 0
 
     def __init__(self):
         logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
@@ -62,6 +62,7 @@ class Usb:
         """ejecutar pila de instucciones del AD"""
         data = []
         for c in requests:
+            
             response = self.request(*c)
             data.append(response.value)
             sleep(delay)
