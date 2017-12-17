@@ -113,7 +113,7 @@ class Dds2(object):
         self.cmd.append((['k', chr(0x75), chr(0x08), chr(0x78), chr(w1_1)], 4))
         self.cmd.append((['k', chr(0x75), chr(0x09), chr(0x78), chr(w1_0)], 4))
         # pulso UDCLK actualiza registro de trabajo
-        self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
+        #self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
 
         print "dds2 set freq"
