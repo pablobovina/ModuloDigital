@@ -28,3 +28,20 @@ class Secuence(object):
         ins.reverse()
         self.instructions.append(ins)
         return True
+
+    def lazo(self, pattern, data, lazo):
+        print "lazo " + pattern + " " + str(data) + " " + str(lazo)
+        lazo = "0" * (2 - len("{0:b}".format(lazo))) + "{0:b}".format(lazo)
+        data = "0" * (11 - len("{0:b}".format(data))) + "{0:b}".format(data)
+        ins = wrap(pattern + data + lazo + "010" + "0" * 32, 8)
+        ins.reverse()
+        self.instructions.append(ins)
+        return True
+
+    def retl(self, pattern, data):
+        print "retl " + pattern + " " + str(data)
+        data = "0" * (11 - len("{0:b}".format(data))) + "{0:b}".format(data)
+        ins = wrap(pattern + data + "0" * 2 + "011" + "0" * 32, 8)
+        ins.reverse()
+        self.instructions.append(ins)
+        return True
