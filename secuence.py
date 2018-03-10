@@ -14,34 +14,37 @@ class Secuence(object):
         self.sec_name = sec_name
         self.instructions = []
 
-    def cont(self, pattern, t):
-        print "continue " + pattern + " " + str(t)
-        t = "0" * (32 - len("{0:b}".format(t))) + "{0:b}".format(t)
-        ins = wrap(pattern + "0"*11 + "0"*2 + "001" + t, 8)
+    def cont(self, pattern, demora):
+        print "continue " + pattern + " " + str(demora)
+        t = "0" * (32 - len("{0:b}".format(demora))) + "{0:b}".format(demora)
+        ins = wrap(pattern + "0" * 11 + "0" * 2 + "001" + t, 8)
         ins.reverse()
         self.instructions.append(ins)
         return True
 
     def end(self):
         print "fin"
-        ins = wrap("0" * 16 + "0" * 11 + "0" * 2 + "111" + "0"*32, 8)
+        ins = wrap("0" * 16 + "0" * 11 + "0" * 2 + "111" + "0" * 32, 8)
         ins.reverse()
         self.instructions.append(ins)
         return True
 
-    def lazo(self, pattern, data, lazo):
-        print "lazo " + pattern + " " + str(data) + " " + str(lazo)
-        lazo = "0" * (2 - len("{0:b}".format(lazo))) + "{0:b}".format(lazo)
-        data = "0" * (11 - len("{0:b}".format(data))) + "{0:b}".format(data)
-        ins = wrap(pattern + data + lazo + "010" + "0" * 32, 8)
+    def lazo(self, pattern, data, lazo, demora):
+        print "lazo " + pattern + " " + str(data) + " " + str(lazo) + " " + str(demora)
+        d = "0" * (11 - len("{0:b}".format(data))) + "{0:b}".format(data)
+        t = "0" * (32 - len("{0:b}".format(demora))) + "{0:b}".format(demora)
+        l = "0" * (2 - len("{0:b}".format(lazo))) + "{0:b}".format(lazo)
+        ins = wrap(pattern + d + l + "010" + t, 8)
         ins.reverse()
         self.instructions.append(ins)
         return True
 
-    def retl(self, pattern, data):
-        print "retl " + pattern + " " + str(data)
-        data = "0" * (11 - len("{0:b}".format(data))) + "{0:b}".format(data)
-        ins = wrap(pattern + data + "0" * 2 + "011" + "0" * 32, 8)
+    def retl(self, pattern, data, lazo, demora):
+        print "retl " + pattern + " " + str(data) + " " + str(lazo) + " " + str(demora)
+        d = "0" * (11 - len("{0:b}".format(data))) + "{0:b}".format(data)
+        t = "0" * (32 - len("{0:b}".format(demora))) + "{0:b}".format(demora)
+        l = "0" * (2 - len("{0:b}".format(lazo))) + "{0:b}".format(lazo)
+        ins = wrap(pattern + d + l + "011" + t, 8)
         ins.reverse()
         self.instructions.append(ins)
         return True

@@ -44,7 +44,7 @@ class Pp2(object):
             self.cmd.append((instruction, 4))
             self.cmd.append((['T', chr(0x52), chr(0x00)], 4))
 
-        self._execute()
+        #self._execute()
 
         print "pp2 upload program"
         self.requested_operations.append(self.op_codes['upload'])
@@ -56,6 +56,7 @@ class Pp2(object):
     def trigger_program(self):
 
         # instruccion disparo de secuencia de pulsos
+        self.cmd.append((['M', chr(0x50), chr(0x00)], 4))
         self.cmd.append((['D', chr(0x50), chr(0x00), chr(0x80)], 4))
         self._execute()
 
