@@ -7,7 +7,7 @@ Modulo de control del PP2
 
 from Usb import Usb
 from secuence import Secuence
-
+from time import sleep
 
 class Pp2(object):
     """clase para controlar el pp2"""
@@ -15,7 +15,7 @@ class Pp2(object):
     # codigos de estados del pp2
     op_codes = {"execute": 1, "on": 2, "reset": 3, "off": 4, "upload": 5, "trigger": 6}
 
-    def __init__(self, mod_id=1, delay=5, secuence=Secuence()):
+    def __init__(self, mod_id=1, delay=5, amount=200):
         """
             id: entero, identificador de la instancia de dds2
             delay: en milisegundos, intervalo de tiempo entre comandos
@@ -26,11 +26,12 @@ class Pp2(object):
         self.status = None
         self.cmd = []
         self.delay = delay
-        self.secuence = secuence
+        self.secuence = None
         self.interfaz = Usb()
+        self.amount = amount
 
-    def upload_program(self):
-
+    def upload_program(self, s):
+        self.secuence = s
         # reset pp2
         self.cmd.append((['R', chr(0x50), chr(0x02)], 4))
         # modo carga
@@ -44,7 +45,7 @@ class Pp2(object):
             self.cmd.append((instruction, 4))
             self.cmd.append((['T', chr(0x52), chr(0x00)], 4))
 
-        #self._execute()
+        self._execute()
 
         print "pp2 upload program"
         self.requested_operations.append(self.op_codes['upload'])
@@ -72,8 +73,30 @@ class Pp2(object):
 
         data = self.interfaz.execute(self.delay, self.cmd)
 
-        print "pp2 execute"
+        #print "pp2 execute"
         self.requested_operations.append(self.op_codes['execute'])
         self.last_request = self.op_codes['execute']
         self.status = self.op_codes['execute']
+        self.cmd = []
         return data
+
+    def wait_end_run(self):
+        """generalizar usando execute until"""
+        intentos = 0
+        flag = False
+        op = ['E', chr(0x52), chr(0x00)]
+        while intentos < self.amount:
+            response = self.interfaz.request(op, 4)
+            print response.value
+            print "pp2 wait end run"
+            if ord(response.value[0]) & 0x01:
+                intentos = self.amount
+                flag = True
+                print "caracter esperado para cortar"
+                print response.value
+                print ord(response.value[0])
+                break
+            else:
+                intentos += 1
+                sleep(self.delay)
+        return flag

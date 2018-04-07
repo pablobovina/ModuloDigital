@@ -10,13 +10,13 @@ class Usb:
     in_pipe = "\\MCHP_EP1"
     api = ctypes.CDLL("./Microchip/mpusbapi.dll")
     selection = 0
-    write_delay = 500
-    read_delay = 500
+    write_delay = 600
+    read_delay = 600
     debug = False
 
     def __init__(self):
-        logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
-                            level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p')
+        #logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
+        #                    level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p')
         pass
 
     def request(self, data, data_len):
@@ -30,7 +30,7 @@ class Usb:
         pin = self.api._MPUSBOpen(self.selection, self.vid, self.in_pipe, 1, 0)
 
         data = "".join(data)
-        logging.info("join data "+data)
+        #logging.info("join data "+data)
         send_data = ctypes.create_string_buffer(data)
         sent_data_lenght = (ctypes.c_ulong * 1)()
         ctypes.cast(sent_data_lenght, ctypes.POINTER(ctypes.c_ulong))

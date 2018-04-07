@@ -169,6 +169,8 @@ class Ad(object):
         self.requested_operations.append(self.op_codes['execute'])
         self.last_request = self.op_codes['execute']
         self.status = self.op_codes['execute']
+
+        self.cmd = []
         return data
 
     def _wait_convertion(self):

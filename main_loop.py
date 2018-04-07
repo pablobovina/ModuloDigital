@@ -37,8 +37,8 @@ def main():
 
     pulse_secuence.end()
     # cargo secuencia
-    u_pp2 = Pp2(delay=0, secuence=pulse_secuence)
-    u_pp2.upload_program()
+    u_pp2 = Pp2(delay=0)
+    u_pp2.upload_program(pulse_secuence)
     # disparo secuencia de pulsos
     print "disparamos programa PP2"
     u_pp2.trigger_program()
