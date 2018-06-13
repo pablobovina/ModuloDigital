@@ -40,6 +40,7 @@ class Dds2(object):
         self.freq_count = len(freq)
         self.freq_table = {}
 
+        self.deactivate()
         self._reset()
 
         #store freq de a 1 en 1
@@ -49,7 +50,10 @@ class Dds2(object):
         self._freq1(f1)
         if len(freq):
             f2 = freq.pop()
-            self._freq1(f2)
+            self._freq2(f2)
+        #else:
+            #aca harcodeamos
+            #self._freq2(f1)
 
         #store phases de 2 en 2
         if self.phase_count > self.phase_max_dir or self.phase_count == self.phase_max_dir:
@@ -133,16 +137,16 @@ class Dds2(object):
     def _freq1(self, f1):
         """configurar frecuencia de trabajo"""
 
-        calculo = f1 * 281474976710656 / 200000000
-        w1_5 = calculo / 1099511627776
+        calculo = f1 * ((2**48)-1) / 200000000
+        w1_5 = calculo / (2**40)
         calculo = calculo - (w1_5 * 1099511627776)
-        w1_4 = calculo / 4294967296
+        w1_4 = calculo / (2**32)
         calculo = calculo - (w1_4 * 4294967296)
-        w1_3 = calculo / 16777216
+        w1_3 = calculo / (2**24)
         calculo = calculo - (w1_3 * 16777216)
-        w1_2 = calculo / 65536
+        w1_2 = calculo / (2**16)
         calculo = calculo - (w1_2 * 65536)
-        w1_1 = calculo / 256
+        w1_1 = calculo / (2**8)
         w1_0 = calculo - (w1_1 * 256)
 
         # modo PC
@@ -155,10 +159,10 @@ class Dds2(object):
         self.cmd.append((['k', chr(0x75), chr(0x08), chr(0x78), chr(w1_1)], 4))
         self.cmd.append((['k', chr(0x75), chr(0x09), chr(0x78), chr(w1_0)], 4))
         # pulso UDCLK actualiza registro de trabajo
-        #self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
+        self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
 
-        print "dds2 set freq " + str(f1)
+        print "dds2 set freq1 " + str(f1)
         self.requested_operations.append(self.op_codes['freq'])
         self.last_request = self.op_codes['freq']
         self.status = self.op_codes['freq']
@@ -166,19 +170,19 @@ class Dds2(object):
         self.freq_table[str(f1)] = 0
         return True
 
-    def _freq2(self,f2):
+    def _freq2(self, f2):
         """configurar frecuencia de trabajo"""
 
-        calculo = f2 * 281474976710656 / 200000000
-        w1_5 = calculo / 1099511627776
+        calculo = f2 * ((2 ** 48) - 1) / 200000000
+        w1_5 = calculo / (2 ** 40)
         calculo = calculo - (w1_5 * 1099511627776)
-        w1_4 = calculo / 4294967296
+        w1_4 = calculo / (2 ** 32)
         calculo = calculo - (w1_4 * 4294967296)
-        w1_3 = calculo / 16777216
+        w1_3 = calculo / (2 ** 24)
         calculo = calculo - (w1_3 * 16777216)
-        w1_2 = calculo / 65536
+        w1_2 = calculo / (2 ** 16)
         calculo = calculo - (w1_2 * 65536)
-        w1_1 = calculo / 256
+        w1_1 = calculo / (2 ** 8)
         w1_0 = calculo - (w1_1 * 256)
 
         # modo PC
@@ -191,10 +195,10 @@ class Dds2(object):
         self.cmd.append((['k', chr(0x75), chr(0x0e), chr(0x78), chr(w1_1)], 4))
         self.cmd.append((['k', chr(0x75), chr(0x0f), chr(0x78), chr(w1_0)], 4))
         # pulso UDCLK actualiza registro de trabajo
-        # self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
+        self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
 
-        print "dds2 set freq " + str(f2)
+        print "dds2 set freq2 " + str(f2)
         self.requested_operations.append(self.op_codes['freq'])
         self.last_request = self.op_codes['freq']
         self.status = self.op_codes['freq']
