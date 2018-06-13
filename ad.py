@@ -118,11 +118,10 @@ class Ad(object):
 
     def _set_time(self):
         if self.inter_ts * .0000001 != 0:
-            muestras = 1. / (self.inter_ts * .0000001)
+            muestras = self.inter_ts / 100.
             delta_t = 255 - int(muestras)
             data = ['t', chr(0x0c), chr(delta_t)]
             self.cmd.append((data, 4))
-
             print "set_time"
             self.requested_operations.append(self.op_codes['setTime'])
             self.last_request = self.op_codes['setTime']
