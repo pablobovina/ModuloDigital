@@ -40,8 +40,8 @@ class Dds2(object):
         self.freq_count = len(freq)
         self.freq_table = {}
 
-        self.deactivate()
         self._reset()
+        #self.deactivate()
 
         #store freq de a 1 en 1
         if self.freq_count > self.freq_max_dir or self.freq_count < self.freq_min_dir:
@@ -209,18 +209,19 @@ class Dds2(object):
 
     def _phase(self, p, d):
         """configurar fase de trabajo"""
-        fs1_h = p / 256
-        fs1_l = p - (fs1_h * 256)
+        # resolucion es  2 ** 14 / 360 resolucion
+        fs1_h = (45 * p) / 256
+        fs1_l = (45 * p) - (fs1_h * 256)
 
         # modo escritura de ram de fases
         self.cmd.append((['b', chr(0x71), chr(0x02)], 4))
         # set ram con fase
-        self.cmd.append((['w', chr(0x70), chr(d), chr(0x74), chr(fs1_h),
-                          chr(0x70), chr(d+1), chr(0x74), chr(fs1_l)], 4))
+        self.cmd.append((['w', chr(0x70), chr(d*2), chr(0x74), chr(fs1_h),
+                          chr(0x70), chr((d*2)+1), chr(0x74), chr(fs1_l)], 4))
         # modo PC
         self.cmd.append((['b', chr(0x71), chr(0x00)], 4))
         self._execute()
-        self.phase_table[str(p)] = d * 2
+        self.phase_table[str(p)] = d
 
         print "dds2 set phase " + str(p) + " " + str(self.get_dir_phase(p))
         self.requested_operations.append(self.op_codes['phase'])
