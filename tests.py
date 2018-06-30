@@ -238,17 +238,15 @@ d5 = {
 
 d6 = {
     "cpoints": [
-        {"lsb": "1" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "00000000", "time": "100",
-         "phase": "0, 90, 180, 270", "freq": "1", "data": "0", "id": 1523141654228L},
-        {"lsb": "1" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "10000000", "time": "100",
-         "phase": "0, 90, 180, 270", "freq": "1", "data": "0", "id": 1523141654229L},
-        {"lsb": "1" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "10000000", "time": "100",
-         "phase": "0, 90, 180, 270", "freq": "1", "data": "0", "id": 1523141654230L},
-        {"lsb": "1" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "10000000", "time": "100",
-         "phase": "0, 90, 180, 270", "freq": "1", "data": "0", "id": 1523141654231L}
+        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "us", "type": "C", "msb": "0"*8, "time": "2",
+         "phase": "0", "freq": "10", "data": "0", "id": 1523141654228L},
+        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "us", "type": "C", "msb": "0"*8, "time": "2",
+         "phase": "90", "freq": "10", "data": "0", "id": 1523141654229L},
+        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "us", "type": "C", "msb": "0"*8, "time": "2",
+         "phase": "180", "freq": "10", "data": "0", "id": 1523141654230L},
     ],
     "settings": {
-        "a_times": "1",
+        "a_times": "0",
         "a_name": "Experimento de pruebas",
         "a_description": "Este es un experimento de pruebas",
         "a_freq": "100",
