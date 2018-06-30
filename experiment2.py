@@ -55,7 +55,7 @@ class Experiment:
     def _get_dir_freq(self, freq):
         return self.dds2.get_dir_freq(freq)
 
-    def _get_pattern(self, pulsos, freq, phase, load_ram="0", udclk="0", disparo_ad="0"):
+    def _get_pattern(self, pulsos, freq, phase, load_ram="0", udclk="0", disparo_ad="0", pulso_test=None):
         p = self._get_dir_phase(phase)
         p_1 = "0" * (4 - len("{0:b}".format(p))) + "{0:b}".format(p)
         f = self._get_dir_freq(freq)
@@ -64,6 +64,9 @@ class Experiment:
         # a  b    c  d  e  f    g    h   i   j k   l   m  n  o  p
         # 0  1    2  3  4  5    6    7   8   9 10  11  12 13 14 15
         s = pulsos[0:2] + p_1 + udclk + load_ram + f_1 + pulsos[9:11] + disparo_ad + pulsos[12:16]
+        if pulso_test:
+            s = pulso_test + pulsos[1:2] + p_1 + udclk + load_ram + f_1 + pulsos[9:11] + disparo_ad + pulsos[12:16]
+
         return s
 
     def _reset_secuence(self):
@@ -92,12 +95,12 @@ class Experiment:
         if cpoints[counter]["type"] == "C":
             # carga fase en ram
             p_load_ram = self._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase, load_ram="1")
-            demora_load_ram = 20
+            demora_load_ram = 2
             self.secuence.cont(p_load_ram, demora_load_ram)
             ins += 1
             # carga fase en registro trabajo con pulso udlck
-            p_udclk = self._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase, load_ram="1", udclk="1")
-            demora_udclk = 20
+            p_udclk = self._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase, load_ram="0", udclk="1")
+            demora_udclk = 2
             self.secuence.cont(p_udclk, demora_udclk)
             ins += 1
             # carga de la instruccion original
@@ -109,7 +112,7 @@ class Experiment:
 
             if loops:
                 l = loops.pop()
-                l["demora"] += demora + demora_load_ram +demora_udclk
+                l["demora"] += demora + demora_load_ram + demora_udclk
                 loops.append(l)
             else:
                 self.demora += demora
@@ -130,7 +133,7 @@ class Experiment:
 
             self.secuence.retl(p, data, lazo, demora)
             ins += 1
-            #actualizamos demora acumulada
+            # ctualizamos demora acumulada
             if loops:
                 l = loops.pop()
                 l["demora"] += (demora+t)*rep
