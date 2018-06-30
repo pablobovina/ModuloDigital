@@ -8,7 +8,8 @@ class Usb:
     vid = "vid_04d8&pid_000c"
     out_pipe = "\\MCHP_EP1"
     in_pipe = "\\MCHP_EP1"
-    api = ctypes.CDLL("./Microchip/mpusbapi.dll")
+    api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ModuloDigital\\Microchip\\mpusbapi.dll")
+    # api = ctypes.CDLL(".\\Microchip\\mpusbapi.dll")
     selection = 0
     write_delay = 600
     read_delay = 600
