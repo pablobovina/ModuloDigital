@@ -11,9 +11,6 @@ from Usb import Usb
 class Dds2(object):
     """clase para controlar el dds2"""
 
-    # codigos de estados del dds2
-    op_codes = {"execute": 1, "on": 2, "reset": 3, "off": 4, "freq": 5, "phase": 6}
-
     def __init__(self, freq, phase, mod_id=1, delay=5):
         """
             id: entero, identificador de la instancia de dds2
@@ -22,28 +19,19 @@ class Dds2(object):
             :type phase: set
         """
         self.mod_id = mod_id
-        self.last_request = None
-        self.requested_operations = []
-        self.status = None
-
         self.cmd = []
         self.delay = delay
         self.interfaz = Usb()
-
         self.phase_max_dir = 16
         self.phase_min_dir = 1
         self.phase_count = len(phase)
         self.phase_table = {}
-
         self.freq_max_dir = 2
         self.freq_min_dir = 1
         self.freq_count = len(freq)
         self.freq_table = {}
 
         self._reset()
-        #self.deactivate()
-
-        #store freq de a 1 en 1
         if self.freq_count > self.freq_max_dir or self.freq_count < self.freq_min_dir:
             raise NameError('error freq store')
         f1 = freq.pop()
@@ -51,18 +39,12 @@ class Dds2(object):
         if len(freq):
             f2 = freq.pop()
             self._freq2(f2)
-        #else:
-            #aca harcodeamos
-            #self._freq2(f1)
-
-        #store phases de 2 en 2
         if self.phase_count > self.phase_max_dir or self.phase_count == self.phase_max_dir:
             raise NameError('error phase store')
         counter_p = 0
         for p in phase:
             self._phase(p, counter_p)
             counter_p += 1
-
         self._activate()
 
         return
@@ -91,12 +73,6 @@ class Dds2(object):
         # Shape keying deshabilitado
         self.cmd.append((['k', chr(0x75), chr(0x20), chr(0x78), chr(0x00)], 4))
         self._execute()
-        
-        print "dds2 reset"
-        self.requested_operations.append(self.op_codes['reset'])
-        self.last_request = self.op_codes['reset']
-        self.status = self.op_codes['reset']
-
         return True
 
     def _activate(self):
@@ -109,15 +85,9 @@ class Dds2(object):
         # modo dds con fases
         self.cmd.append((['b', chr(0x71), chr(0x05)], 4))
         self._execute()
-
-        print "dds2 on"
-        self.requested_operations.append(self.op_codes['on'])
-        self.last_request = self.op_codes['on']
-        self.status = self.op_codes['on']
-
         return True
 
-    def deactivate(self):
+    def _deactivate(self):
         """desactivar el dds2"""
 
         # modo PC
@@ -127,11 +97,6 @@ class Dds2(object):
         # pulso UDCLK
         self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
-
-        print "dds2 off"
-        self.requested_operations.append(self.op_codes['off'])
-        self.last_request = self.op_codes['off']
-        self.status = self.op_codes['off']
         return True
 
     def _freq1(self, f1):
@@ -161,12 +126,6 @@ class Dds2(object):
         # pulso UDCLK actualiza registro de trabajo
         self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
-
-        print "dds2 set freq1 " + str(f1)
-        self.requested_operations.append(self.op_codes['freq'])
-        self.last_request = self.op_codes['freq']
-        self.status = self.op_codes['freq']
-
         self.freq_table[str(f1)] = 0
         return True
 
@@ -197,12 +156,6 @@ class Dds2(object):
         # pulso UDCLK actualiza registro de trabajo
         self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
-
-        print "dds2 set freq2 " + str(f2)
-        self.requested_operations.append(self.op_codes['freq'])
-        self.last_request = self.op_codes['freq']
-        self.status = self.op_codes['freq']
-
         self.freq_table[str(f2)] = 1
 
         return True
@@ -222,25 +175,11 @@ class Dds2(object):
         self.cmd.append((['b', chr(0x71), chr(0x00)], 4))
         self._execute()
         self.phase_table[str(p)] = d
-
-        print "dds2 set phase " + str(p) + " " + str(self.get_dir_phase(p))
-        self.requested_operations.append(self.op_codes['phase'])
-        self.last_request = self.op_codes['phase']
-        self.status = self.op_codes['phase']
-
-
         return True
 
     def _execute(self):
         """ejecutar pila de instucciones del dds2"""
-
         data = self.interfaz.execute(self.delay, self.cmd)
-
-        #print "dds2 execute"
-        self.requested_operations = []
-        self.last_request = self.op_codes['execute']
-        self.status = self.op_codes['execute']
-
-        #limpio comandos a enviar
+        # limpio comandos a enviar
         self.cmd = []
         return data
