@@ -11,10 +11,6 @@ from time import sleep
 
 class Ad(object):
     """clase para controlar el AD"""
-
-    # codigos de estados del pp2
-    op_codes = {"execute": 1, "reset": 2, "setTime": 3, "configure": 4, "loaded": 5,
-                "canalB": 8, "canalA": 9, "canalAB": 10}
     channels = {0x08: "canalB", 0x0A: "canalA", 0x09: "canalAB"}
     bloq_base = {16: 0x00, 32: 0x10, 64: 0x20, 128: 0x30, 256: 0x40, 512: 0x50, 1024: 0x60, 2048: 0x70}
 
@@ -47,10 +43,7 @@ class Ad(object):
         self._reset01()
         self._set_time()
         self._execute()
-        print "ad configured"
-        self.history.append(self.op_codes['configure'])
-        self.last_request = self.op_codes['configure']
-        self.status = self.op_codes['configure']
+        return
 
     def read_channels(self):
         flag = self._wait_convertion()
@@ -68,11 +61,7 @@ class Ad(object):
         self._leer(0x09)  # AB Canal3
         self.channel_ab = self._execute().pop()
         self.data_a, self.data_b = self._combinar(self.channel_b, self.channel_a, self.channel_ab)
-
-        print "ad cargado con datos"
-        self.history.append(self.op_codes['loaded'])
-        self.last_request = self.op_codes['loaded']
-        self.status = self.op_codes['loaded']
+        return
 
     def _reset10(self):
         # reset = 1  modoPC
@@ -82,11 +71,7 @@ class Ad(object):
         config = config & 0xfe
         data = ['r', chr(0x0b), chr(config)]
         self.cmd.append((data, 4))
-
-        print "AD reset10"
-        self.requested_operations.append(self.op_codes['reset'])
-        self.last_request = self.op_codes['reset']
-        self.status = self.op_codes['reset']
+        return
 
     def _reset01(self):
         # ADSetConfig(mAdq, CmbBarrido->ItemIndex, 0, 1);
@@ -96,11 +81,7 @@ class Ad(object):
         config = config | 0x01
         data = ['r', chr(0x0b), chr(config)]
         self.cmd.append((data, 4))
-
-        print "AD reset01"
-        self.requested_operations.append(self.op_codes['reset'])
-        self.last_request = self.op_codes['reset']
-        self.status = self.op_codes['reset']
+        return
 
     def _reset00(self):
         # ADSetConfig(mAdq, CmbBarrido->ItemIndex, 0, 0);
@@ -110,11 +91,7 @@ class Ad(object):
         config = config & 0xfe
         data = ['r', chr(0x0b), chr(config)]
         self.cmd.append((data, 4))
-
-        print "AD reset00"
-        self.requested_operations.append(self.op_codes['reset'])
-        self.last_request = self.op_codes['reset']
-        self.status = self.op_codes['reset']
+        return
 
     def _set_time(self):
         if self.inter_ts * .0000001 != 0:
@@ -122,20 +99,12 @@ class Ad(object):
             delta_t = 255 - int(muestras)
             data = ['t', chr(0x0c), chr(delta_t)]
             self.cmd.append((data, 4))
-            print "set_time"
-            self.requested_operations.append(self.op_codes['setTime'])
-            self.last_request = self.op_codes['setTime']
-            self.status = self.op_codes['setTime']
+        return
 
     def _leer(self, channel_dir):
         data = ['B', chr(channel_dir)]
         self.cmd.append((data, self.buffer_len))
-
-        print "AD leer canal " + self.channels[channel_dir]
-        op = self.op_codes[self.channels[channel_dir]]
-        self.requested_operations.append(op)
-        self.last_request = op
-        self.status = op
+        return
 
     def _completar(self, s):
         if len(s) != self.buffer_len:
@@ -163,12 +132,6 @@ class Ad(object):
     def _execute(self):
         """ejecutar pila de instucciones del AD"""
         data = self.interfaz.execute(self.delay, self.cmd)
-
-        print "ad execute requested_operations"
-        self.requested_operations.append(self.op_codes['execute'])
-        self.last_request = self.op_codes['execute']
-        self.status = self.op_codes['execute']
-
         self.cmd = []
         return data
 
@@ -180,11 +143,8 @@ class Ad(object):
         while intentos < self.amount:
             response = self.interfaz.request(op, 4)
             if ord(response.value[0]) & 0x01:
-                intentos = self.amount
                 flag = True
-                print "caracter esperado para cortar"
-                print response.value
-                print ord(response.value[0])
+                break
             else:
                 intentos += 1
                 sleep(self.delay)
