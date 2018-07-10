@@ -21,14 +21,11 @@ class Experiment:
 
         self.freq_set = set()
         self.phase_set = set()
-
         self._scan_freq_phases()
-
         self.dds2 = Dds2(self.freq_set, self.phase_set, delay=0)
 
-        self.ad = Ad(delay=0, bloqnum=definition["settings"]["a_bloq"],
-                     inter_ts=definition["settings"]["a_ts"],
-                     channel=definition["settings"]["a_channel"])
+        self.ad = Ad(bloqnum=definition["settings"]["a_bloq"], inter_ts=definition["settings"]["a_ts"])
+        self.ad_channel = definition["settings"]["a_channel"]
         self.ad.configure()
 
         print "_" * 80
@@ -190,7 +187,7 @@ class Experiment:
              "phase": "0, 90, 180, 270", "freq": "100000", "data": "0", "id": 1523141654228L}
 
         "settings": {
-            "a_times": "50",
+            "a_times": "0",
             "a_name": "Experimento de pruebas",
             "a_description": "Este es un experimento de pruebas",
             "a_freq": "100",
@@ -198,20 +195,21 @@ class Experiment:
             "a_freq_unit": "mhz",
             "a_ts_unit": "us",
             "a_lsb": "10000001",
-            "a_ts": "10",
-            "a_bloq": "8"
+            "a_ts": "1000",
+            "a_bloq": "1",
+            "a_channel": "3",
         }
 
         """
         for e in d["cpoints"]:
-            e["time"] = self._time_to_40_ns(float(e["time"]), e["t_unit"])
+            e["time"] = self._time_to_ns(float(e["time"]), e["t_unit"], 40)
             e["phase"] = [int(s.strip()) for s in e["phase"].split(",")]
             e["freq"] = self._freq_to_hz(float(e["freq"]), e["freq_unit"])
             e["data"] = int(e["data"])
 
         d["settings"]["a_times"] = int(d["settings"]["a_times"])
         d["settings"]["a_freq"] = int(d["settings"]["a_freq"])
-        d["settings"]["a_ts"] = int(d["settings"]["a_ts"])
+        d["settings"]["a_ts"] = self._time_to_ns(float(d["settings"]["a_ts"]), d["settings"]["a_ts_unit"], 1)
         d["settings"]["a_bloq"] = int(d["settings"]["a_bloq"])
         d["settings"]["a_channel"] = int(d["settings"]["a_channel"])
 
@@ -231,7 +229,7 @@ class Experiment:
             res = f_val * (10 ** 6)
         return int(floor(res))
 
-    def _time_to_40_ns(self, t_val, t_unit):
+    def _time_to_ns(self, t_val, t_unit, factor):
         res = None
         if t_unit == "ns":
             res = t_val
@@ -239,7 +237,7 @@ class Experiment:
             res = t_val * (10 ** 3)
         if t_unit == "ms":
             res = t_val * (10 ** 6)
-        return int(res / 40)
+        return int(res / float(factor))
 
 
 if __name__ == "__main__":
