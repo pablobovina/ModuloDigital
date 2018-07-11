@@ -238,11 +238,11 @@ d5 = {
 
 d6 = {
     "cpoints": [
-        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "us", "type": "C", "msb": "0"*8, "time": "2",
+        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "1"*8, "time": "500",
          "phase": "0", "freq": "10", "data": "0", "id": 1523141654228L},
-        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "us", "type": "C", "msb": "0"*8, "time": "2",
+        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "0"*8, "time": "500",
          "phase": "90", "freq": "10", "data": "0", "id": 1523141654229L},
-        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "us", "type": "C", "msb": "0"*8, "time": "2",
+        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "1"*8, "time": "500",
          "phase": "180", "freq": "10", "data": "0", "id": 1523141654230L},
     ],
     "settings": {
@@ -254,7 +254,7 @@ d6 = {
         "a_freq_unit": "mhz",
         "a_ts_unit": "us",
         "a_lsb": "10000001",
-        "a_ts": "1000",
+        "a_ts": "1",
         "a_bloq": "1",
         "a_channel": "3",
     }
