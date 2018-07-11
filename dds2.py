@@ -6,46 +6,93 @@ Modulo de control del DDS2
 """
 
 from Usb import Usb
+import logging
 
 
 class Dds2(object):
     """clase para controlar el dds2"""
 
-    def __init__(self, freq, phase, mod_id=1, delay=5):
+    def __init__(self, freq, phase, mod_id=1, delay=0):
         """
             id: entero, identificador de la instancia de dds2
             delay: en milisegundos, intervalo de tiempo entre comandos
             :type freq: set
             :type phase: set
         """
+
+        errors = []
+
+        self._check_mod_id(mod_id, errors)
+        self._check_delay(delay, errors)
+        self._check_freq(freq, errors)
+        self._check_phase(phase, errors)
+
+        if errors:
+            for error in errors:
+                logging.error(error)
+            raise Exception("error create instance DDS2 " + ";".join(errors))
+
         self.mod_id = mod_id
         self.cmd = []
         self.delay = delay
         self.interfaz = Usb()
-        self.phase_max_dir = 16
-        self.phase_min_dir = 1
-        self.phase_count = len(phase)
         self.phase_table = {}
-        self.freq_max_dir = 2
-        self.freq_min_dir = 1
-        self.freq_count = len(freq)
         self.freq_table = {}
 
         self._reset()
-        if self.freq_count > self.freq_max_dir or self.freq_count < self.freq_min_dir:
-            raise NameError('error freq store')
+
         f1 = freq.pop()
         self._freq1(f1)
         if len(freq):
             f2 = freq.pop()
             self._freq2(f2)
-        if self.phase_count > self.phase_max_dir or self.phase_count == self.phase_max_dir:
-            raise NameError('error phase store')
+
         counter_p = 0
         for p in phase:
             self._phase(p, counter_p)
             counter_p += 1
         self._activate()
+
+        return
+
+    @staticmethod
+    def _check_mod_id(mod_id, errors=None):
+        if not (mod_id > 0 and isinstance(mod_id, int)):
+            errors.append("mod_id debe ser un numero entero mayor a 0")
+        return
+
+    @staticmethod
+    def _check_delay(delay, errors=None):
+        if not (0 <= delay <= 1000 and isinstance(delay, int)):
+            errors.append("delay debe ser un entero en [0,1000]")
+        return
+
+    @staticmethod
+    def _check_freq(freq, errors=None):
+        if not len(freq):
+            errors.append("no hay frecuencias para almacenar")
+
+        if not (1 <= len(freq) <= 2):
+            errors.append("hay mas de 2 frecuencias para almacenar")
+
+        for f in freq:
+            if not (isinstance(f, int) and 0 <= f <= 200000000):
+                errors.append("no se puede almacenar la frecuencia {} debe ser entero en [0,200000000]".format(f))
+
+        return
+
+    @staticmethod
+    def _check_phase(phase, errors=None):
+
+        if not len(phase):
+            errors.append("no hay fases para almacenar")
+
+        if not (1 <= len(phase) <= 16):
+            errors.append("hay mas de 16 fases para almacenar")
+
+        for p in phase:
+            if not (isinstance(p, int) and 0 <= p <= 360):
+                errors.append("no se puede almacenar la fase {} debe ser entero en [0,360]".format(p))
 
         return
 
