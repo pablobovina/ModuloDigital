@@ -6,8 +6,8 @@ Modulo de control del PP2
 """
 
 from Usb import Usb
-from secuence import Secuence
 from time import sleep
+import logging
 
 
 class Pp2(object):
@@ -18,6 +18,15 @@ class Pp2(object):
             id: entero, identificador de la instancia de dds2
             delay: en milisegundos, intervalo de tiempo entre comandos
         """
+        errors = []
+        self._check_mod_id(mod_id, errors)
+        self._check_delay(delay, errors)
+        self._check_amount(amount, errors)
+        if errors:
+            for error in errors:
+                logging.error(error)
+            raise Exception("error create instance PP2 " + ";".join(errors))
+
         self.mod_id = mod_id
         self.cmd = []
         self.delay = delay
@@ -25,8 +34,29 @@ class Pp2(object):
         self.interfaz = Usb()
         self.amount = amount
 
+    @staticmethod
+    def _check_mod_id(mod_id, errors=None):
+        if not (mod_id > 0 and isinstance(mod_id, int)):
+            errors.append("mod_id debe ser un numero entero mayor a 0")
+        return
+
+    @staticmethod
+    def _check_delay(delay, errors=None):
+        if not (0 <= delay <= 1000 and isinstance(delay, int)):
+            errors.append("delay debe ser un entero en [0,1000]")
+        return
+
+    @staticmethod
+    def _check_amount(amount, errors=None):
+        if not (0 <= amount <= 500 and isinstance(amount, int)):
+            errors.append("amount debe ser un entero en [0,500]")
+        return
+
     def upload_program(self, s):
         self.secuence = s
+        if self.secuence.empty():
+            logging.error("Intenta ejecutar una secuencia de pulsos vacia")
+            raise Exception("Intenta ejecutar una secuencia de pulsos vacia")
         # reset pp2
         self.cmd.append((['R', chr(0x50), chr(0x02)], 4))
         # modo carga

@@ -48,3 +48,6 @@ class Secuence(object):
         ins.reverse()
         self.instructions.append(ins)
         return True
+
+    def empty(self):
+        return len(self.instructions) == 0
