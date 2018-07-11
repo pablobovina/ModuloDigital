@@ -47,7 +47,7 @@ class Ad(object):
 
     @staticmethod
     def _check_mod_id(mod_id, errors=None):
-        if mod_id < 0 or not isinstance(mod_id, int):
+        if not (mod_id > 0 and isinstance(mod_id, int)):
             errors.append("mod_id debe ser un numero entero mayor a 0")
         return
 
