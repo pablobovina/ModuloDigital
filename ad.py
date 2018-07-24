@@ -44,6 +44,7 @@ class Ad(object):
         self.inter_ts = inter_ts
         self.amount = amount
         self.interfaz = Usb()
+        self._configure()
 
     @staticmethod
     def _check_mod_id(mod_id, errors=None):
@@ -75,7 +76,7 @@ class Ad(object):
             errors.append("inter_ts debe enteno en nanosegundos [100, 254000]")
         return
 
-    def configure(self):
+    def _configure(self):
         self._reset10()
         self._reset01()
         self._set_time()
@@ -83,8 +84,7 @@ class Ad(object):
         return
 
     def read_channels(self):
-        flag = self._wait_convertion()
-        print "finalizo la conversion con estado: " + str(flag)
+        self._wait_convertion()
         self._reset10()
         self._reset00()
         self._leer(0x08)  # B Canal1
@@ -154,7 +154,6 @@ class Ad(object):
         l1 = self._completar(l1)
         l2 = self._completar(l2)
         l3 = self._completar(l3)
-        print max_len
         ca = []
         cb = []
 
