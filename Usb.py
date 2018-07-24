@@ -26,7 +26,8 @@ class Usb:
         data: data to write
         data_len: number of bytes incoming in response
         """
-
+        if not self.api._MPUSBGetDeviceCount(self.vid):
+            raise Exception("Modulo desconectado")
         pout = self.api._MPUSBOpen(self.selection, self.vid, self.out_pipe, 0, 0)
         pin = self.api._MPUSBOpen(self.selection, self.vid, self.in_pipe, 1, 0)
 
@@ -73,20 +74,3 @@ class Usb:
 
             sleep(delay)
         return data
-
-    def execute_until(self, delay, data, amount, pred):
-        """envia data hasta satisfacer pred
-            para y retorna true si se satifacio pred antes de llegar al numero maximo de intentos
-            caso contrario retorna false
-        """
-        intentos = 0
-        flag = False
-        while intentos < amount:
-            response = self.request(*data)
-            if pred(response.value):
-                intentos = amount
-                flag = True
-            else:
-                intentos += 1
-                sleep(delay)
-        return flag
