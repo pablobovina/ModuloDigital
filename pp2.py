@@ -13,7 +13,7 @@ import logging
 class Pp2(object):
     """clase para controlar el pp2"""
 
-    def __init__(self, mod_id=1, delay=5, amount=200):
+    def __init__(self, mod_id=1, delay=0, amount=200):
         """
             id: entero, identificador de la instancia de dds2
             delay: en milisegundos, intervalo de tiempo entre comandos
@@ -90,7 +90,7 @@ class Pp2(object):
         """generalizar usando execute until"""
         intentos = 0
         flag = False
-        op = ['E', chr(0x52), chr(0x00)]
+        op = ['E', chr(0x50), chr(0x00)]
         while intentos < self.amount:
             response = self.interfaz.request(op, 4)
             if ord(response.value[0]) & 0x01:
