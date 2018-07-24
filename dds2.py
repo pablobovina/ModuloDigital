@@ -96,12 +96,6 @@ class Dds2(object):
 
         return
 
-    def get_dir_freq(self, freq):
-        return self.freq_table[str(freq)]
-
-    def get_dir_phase(self, phase):
-        return self.phase_table[str(phase)]
-
     def _reset(self):
         """lista de comandos para un master reset de dds2"""
 
@@ -173,7 +167,7 @@ class Dds2(object):
         # pulso UDCLK actualiza registro de trabajo
         self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
-        self.freq_table[str(f1)] = 0
+        self.freq_table[f1] = 0
         return True
 
     def _freq2(self, f2):
@@ -203,7 +197,7 @@ class Dds2(object):
         # pulso UDCLK actualiza registro de trabajo
         self.cmd.append((['u', chr(0x76), chr(0x00)], 4))
         self._execute()
-        self.freq_table[str(f2)] = 1
+        self.freq_table[f2] = 1
 
         return True
 
@@ -221,7 +215,7 @@ class Dds2(object):
         # modo PC
         self.cmd.append((['b', chr(0x71), chr(0x00)], 4))
         self._execute()
-        self.phase_table[str(p)] = d
+        self.phase_table[p] = d
         return True
 
     def _execute(self):
