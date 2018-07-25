@@ -238,7 +238,7 @@ d5 = {
 
 d6 = {
     "cpoints": [
-        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "1"*8, "time": "500",
+        {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "1"*8, "time": "10000",
          "phase": "0", "freq": "10", "data": "0", "id": 1523141654228L},
         {"lsb": "0" * 8, "freq_unit": "mhz", "t_unit": "ms", "type": "C", "msb": "0"*8, "time": "500",
          "phase": "90", "freq": "10", "data": "0", "id": 1523141654229L},
@@ -246,7 +246,7 @@ d6 = {
          "phase": "180", "freq": "10", "data": "0", "id": 1523141654230L},
     ],
     "settings": {
-        "a_times": "0",
+        "a_times": "1",
         "a_name": "Experimento de pruebas",
         "a_description": "Este es un experimento de pruebas",
         "a_freq": "100",
@@ -257,6 +257,7 @@ d6 = {
         "a_ts": "1",
         "a_bloq": "1",
         "a_channel": "3",
+        "a_phase": "0"
     }
 }
 
