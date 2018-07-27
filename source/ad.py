@@ -14,7 +14,7 @@ class Ad(object):
     """clase para controlar el AD"""
     bloq_base = {1: 0x00, 2: 0x10, 4: 0x20, 8: 0x30, 16: 0x40, 32: 0x50, 64: 0x60, 128: 0x70}
 
-    def __init__(self, mod_id=1, delay=0, amount=200, bloqnum=16, inter_ts=1000000):
+    def __init__(self, mod_id=1, delay=0, amount=200, bloqnum=16, inter_ts=100):
         """
             id: entero, identificador de la instancia de dds2
             delay: en milisegundos, intervalo de tiempo entre comandos
@@ -73,7 +73,7 @@ class Ad(object):
     @staticmethod
     def _check_inter_ts(inter_ts, errors=None):
         if not (100 <= inter_ts <= 254000 and isinstance(inter_ts, int)):
-            errors.append("inter_ts debe enteno en nanosegundos [100, 254000]")
+            errors.append("inter_ts debe entero en nanosegundos [100, 254000]")
         return
 
     def _configure(self):
