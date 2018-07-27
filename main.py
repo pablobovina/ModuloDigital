@@ -1,6 +1,6 @@
 from tests import d6
-from experiment_reporter import ExperimentReporter
-from experiment_scanner import ExperimentScanner
+from source.experiment_reporter import ExperimentReporter
+from source.experiment_scanner import ExperimentScanner
 
 
 def main(d):
