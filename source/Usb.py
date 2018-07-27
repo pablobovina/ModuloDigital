@@ -2,6 +2,7 @@
 import ctypes
 import logging
 from time import sleep
+from setup import USB_FAKE
 
 
 class Usb:
@@ -13,9 +14,9 @@ class Usb:
     selection = 0
     write_delay = 600
     read_delay = 600
-    debug = False
+    debug = USB_FAKE
 
-    def __init__(self):
+    def __init__(self, debug=False):
         #logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
         #                    level=logging.DEBUG, datefmt='%m/%d/%Y %I:%M:%S %p')
         pass
@@ -59,6 +60,7 @@ class Usb:
         #logging.info("enviando linea: "+data.__str__())
         data = "".join(data)
         #logging.info("bytes enviados "+str(len(data)) + " '" + data + "'")
+        #print data
         return chr(0x00)*data_len
 
     def execute(self, delay, requests):
