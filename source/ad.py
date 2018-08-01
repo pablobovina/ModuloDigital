@@ -175,6 +175,10 @@ class Ad(object):
         intentos = 0
         flag = False
         op = ['S', chr(0x0b), chr(0x00)]
+
+        if self.interfaz.debug:
+            return True
+
         while intentos < self.amount:
             response = self.interfaz.request(op, 4)
             if ord(response.value[0]) & 0x01:

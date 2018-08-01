@@ -90,6 +90,10 @@ class Pp2(object):
         """generalizar usando execute until"""
         intentos = 0
         flag = False
+
+        if self.interfaz.debug:
+            return True
+
         op = ['E', chr(0x50), chr(0x00)]
         while intentos < self.amount:
             response = self.interfaz.request(op, 4)
