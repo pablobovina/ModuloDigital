@@ -12,8 +12,8 @@ class Usb:
     api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ModuloDigital\\Microchip\\mpusbapi.dll")
     # api = ctypes.CDLL(".\\Microchip\\mpusbapi.dll")
     selection = 0
-    write_delay = 600
-    read_delay = 600
+    write_delay = 500
+    read_delay = 500
     debug = USB_FAKE
 
     def __init__(self, debug=False):
@@ -76,3 +76,46 @@ class Usb:
 
             sleep(delay)
         return data
+
+    def request_read(self, data_len):
+        if not self.api._MPUSBGetDeviceCount(self.vid):
+            raise Exception("Modulo desconectado")
+        pout = self.api._MPUSBOpen(self.selection, self.vid, self.out_pipe, 0, 0)
+        pin = self.api._MPUSBOpen(self.selection, self.vid, self.in_pipe, 1, 0)
+
+        receive_data = ctypes.create_string_buffer(data_len)
+        receive_length = (ctypes.c_ulong * 1)()
+        ctypes.cast(receive_length, ctypes.POINTER(ctypes.c_ulong))
+        receive_delay = 500
+        expected_receive_length = data_len
+
+        self.api._MPUSBRead(pin, receive_data, expected_receive_length, receive_length, receive_delay)
+        self.api._MPUSBClose(pin)
+        self.api._MPUSBClose(pout)
+
+        return receive_data
+
+    def request_write(self, data):
+        """
+        make a request to module microchip via usb
+        data: data to write
+        data_len: number of bytes incoming in response
+        """
+        if not self.api._MPUSBGetDeviceCount(self.vid):
+            raise Exception("Modulo desconectado")
+        pout = self.api._MPUSBOpen(self.selection, self.vid, self.out_pipe, 0, 0)
+        pin = self.api._MPUSBOpen(self.selection, self.vid, self.in_pipe, 1, 0)
+
+        data = "".join(data)
+        #logging.info("join data "+data)
+        send_data = ctypes.create_string_buffer(data)
+        sent_data_lenght = (ctypes.c_ulong * 1)()
+        ctypes.cast(sent_data_lenght, ctypes.POINTER(ctypes.c_ulong))
+        send_delay = 500
+        send_lenght = len(data)
+
+        self.api._MPUSBWrite(pout, send_data, send_lenght, sent_data_lenght, send_delay)
+        self.api._MPUSBClose(pin)
+        self.api._MPUSBClose(pout)
+
+        return True

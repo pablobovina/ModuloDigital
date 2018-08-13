@@ -87,16 +87,16 @@ class Ad(object):
         self._wait_convertion()
         self._reset10()
         self._reset00()
-        self._leer(0x08)  # B Canal1
-        self.channel_b = self._execute().pop()
+        self._execute()
+        self.channel_b = self._leer(0x08)
         self._reset10()
         self._reset00()
-        self._leer(0x0A)  # A Canal2
-        self.channel_a = self._execute().pop()
+        self._execute()
+        self.channel_a = self._leer(0x0A)
         self._reset10()
         self._reset00()
-        self._leer(0x09)  # AB Canal3
-        self.channel_ab = self._execute().pop()
+        self._execute()
+        self.channel_ab = self._leer(0x09)
         self.data_a, self.data_b = self._combinar(self.channel_b, self.channel_a, self.channel_ab)
         return
 
@@ -139,8 +139,9 @@ class Ad(object):
 
     def _leer(self, channel_dir):
         data = ['B', chr(channel_dir)]
-        self.cmd.append((data, self.buffer_len))
-        return
+        self.interfaz.request_write(data)
+        response = self.interfaz.request_read(self.buffer_len)
+        return response
 
     def _completar(self, s):
         if len(s) != self.buffer_len:

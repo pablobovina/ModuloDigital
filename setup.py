@@ -1,1 +1,1 @@
-USB_FAKE = True
+USB_FAKE = False
