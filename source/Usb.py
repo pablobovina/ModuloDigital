@@ -2,19 +2,18 @@
 import ctypes
 import logging
 from time import sleep
-from setup import USB_FAKE
 
 
 class Usb:
     vid = "vid_04d8&pid_000c"
     out_pipe = "\\MCHP_EP1"
     in_pipe = "\\MCHP_EP1"
-    api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ModuloDigital\\Microchip\\mpusbapi.dll")
+    # api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ModuloDigital\\Microchip\\mpusbapi.dll")
     # api = ctypes.CDLL(".\\Microchip\\mpusbapi.dll")
     selection = 0
     write_delay = 500
     read_delay = 500
-    debug = USB_FAKE
+    debug = True
 
     def __init__(self, debug=False):
         #logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s',
