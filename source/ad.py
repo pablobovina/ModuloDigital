@@ -9,6 +9,8 @@ from Usb import Usb
 from time import sleep
 import logging
 
+logger = logging.getLogger("__main__")
+
 
 class Ad(object):
     """clase para controlar el AD"""
@@ -28,7 +30,7 @@ class Ad(object):
 
         if errors:
             for error in errors:
-                logging.error(error)
+                logger.error(error)
             raise Exception("error create instance AD " + ";".join(errors))
 
         self.mod_id = mod_id

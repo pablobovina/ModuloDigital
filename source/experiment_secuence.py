@@ -1,6 +1,8 @@
 from experiment2 import Experiment
 from secuence import Secuence
+import logging
 
+logger = logging.getLogger("__main__")
 
 class ExperimentSecuence(Experiment):
 
@@ -12,7 +14,9 @@ class ExperimentSecuence(Experiment):
 
     def next(self):
         cpoints = Experiment.next(self)
-        return ExperimentSecuence._translate(cpoints, Secuence(), 0, 0, 0, [], self.freq_dirs, self.phase_dirs)
+        pulse_secuence = ExperimentSecuence._translate(cpoints, Secuence(), 0, 0, 0, [], self.freq_dirs, self.phase_dirs)
+        logger.info("Generating pulse secuence")
+        return pulse_secuence
 
     @staticmethod
     def _translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs):

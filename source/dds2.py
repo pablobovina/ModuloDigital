@@ -8,6 +8,8 @@ Modulo de control del DDS2
 from Usb import Usb
 import logging
 
+logger = logging.getLogger("__main__")
+
 
 class Dds2(object):
     """clase para controlar el dds2"""
@@ -29,7 +31,7 @@ class Dds2(object):
 
         if errors:
             for error in errors:
-                logging.error(error)
+                logger.error(error)
             raise Exception("error create instance DDS2 " + ";".join(errors))
 
         self.mod_id = mod_id

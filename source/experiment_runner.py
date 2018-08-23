@@ -1,6 +1,8 @@
 from experiment_secuence import ExperimentSecuence
 from pp2 import Pp2
+import logging
 
+logger = logging.getLogger("__main__")
 
 class ExperimentRunner (ExperimentSecuence):
 
@@ -17,4 +19,5 @@ class ExperimentRunner (ExperimentSecuence):
         self.pp2.trigger_program()
         self.pp2.wait_end_run()
         self.ad.read_channels()
+        logger.info("Retrieving data from AD")
         return self.ad.data_a, self.ad.data_b

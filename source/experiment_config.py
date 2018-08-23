@@ -1,6 +1,8 @@
 from ad import Ad
 from dds2 import Dds2
+import logging
 
+logger = logging.getLogger("__main__")
 
 class ExperimentConfig:
 
@@ -9,3 +11,5 @@ class ExperimentConfig:
         self.ad = Ad(bloqnum=bloq, inter_ts=inter_ts)
         self.freq_dirs = self.dds2.freq_table
         self.phase_dirs = self.dds2.phase_table
+        logger.info("AD configurated")
+        logger.info("DDS2 configurated")

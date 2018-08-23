@@ -9,6 +9,8 @@ from Usb import Usb
 from time import sleep
 import logging
 
+logger = logging.getLogger("__main__")
+
 
 class Pp2(object):
     """clase para controlar el pp2"""
@@ -24,7 +26,7 @@ class Pp2(object):
         self._check_amount(amount, errors)
         if errors:
             for error in errors:
-                logging.error(error)
+                logger.error(error)
             raise Exception("error create instance PP2 " + ";".join(errors))
 
         self.mod_id = mod_id

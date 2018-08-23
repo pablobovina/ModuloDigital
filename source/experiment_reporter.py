@@ -1,6 +1,8 @@
 from experiment_runner import ExperimentRunner
 import csv
+import logging
 
+logger = logging.getLogger("__main__")
 
 class ExperimentReporter (ExperimentRunner):
 
@@ -13,6 +15,7 @@ class ExperimentReporter (ExperimentRunner):
     def next(self):
         data_a, data_b = ExperimentRunner.next(self)
         ExperimentReporter._make_csv_report(data_a, data_b)
+        logger.info("CSV reports generated")
         return data_a, data_b
 
     @staticmethod

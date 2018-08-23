@@ -1,7 +1,9 @@
 from experiment_data import *
 from experiment_config import *
 from experiment_scanner import *
+import logging
 
+logger = logging.getLogger("__main__")
 
 class Experiment(ExperimentData, ExperimentConfig):
 
@@ -18,5 +20,7 @@ class Experiment(ExperimentData, ExperimentConfig):
         return ExperimentData.__iter__(self)
 
     def next(self):
-        return ExperimentData.next(self)
+        next_experiment = ExperimentData.next(self)
+        logger.info("Reading experiment specs")
+        return next_experiment
 

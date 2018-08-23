@@ -1,5 +1,7 @@
 import logging
 
+logger = logging.getLogger("__main__")
+
 
 class ExperimentData:
 
@@ -11,7 +13,7 @@ class ExperimentData:
 
         if errors:
             for error in errors:
-                logging.error(error)
+                logger.error(error)
             raise Exception("error create experiment data " + ";".join(errors))
 
         self.repeat = repeat

@@ -246,7 +246,7 @@ d6 = {
          "phase": "180", "freq": "10", "data": "0", "id": 1523141654230L},
     ],
     "settings": {
-        "a_times": "1",
+        "a_times": "3",
         "a_name": "Experimento de pruebas",
         "a_description": "Este es un experimento de pruebas",
         "a_freq": "100",
