@@ -2,7 +2,7 @@ from experiment_secuence import ExperimentSecuence
 from pp2 import Pp2
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 class ExperimentRunner (ExperimentSecuence):
 

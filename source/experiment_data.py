@@ -1,6 +1,6 @@
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 
 class ExperimentData:

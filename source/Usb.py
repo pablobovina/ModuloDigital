@@ -3,7 +3,7 @@ import ctypes
 from time import sleep
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 
 class Usb:

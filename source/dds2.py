@@ -8,7 +8,7 @@ Modulo de control del DDS2
 from Usb import Usb
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 
 class Dds2(object):

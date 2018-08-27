@@ -3,7 +3,7 @@ from experiment_config import *
 from experiment_scanner import *
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 class Experiment(ExperimentData, ExperimentConfig):
 

@@ -2,7 +2,7 @@ from ad import Ad
 from dds2 import Dds2
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 class ExperimentConfig:
 

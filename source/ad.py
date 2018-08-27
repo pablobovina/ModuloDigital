@@ -9,7 +9,7 @@ from Usb import Usb
 from time import sleep
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 
 class Ad(object):

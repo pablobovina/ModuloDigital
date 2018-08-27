@@ -7,7 +7,7 @@ Modulo de definicion de secuencias aceptados
 from textwrap import wrap
 import logging
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 class Secuence(object):
     """clase para generar secuencias"""
