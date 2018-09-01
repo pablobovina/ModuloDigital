@@ -1,22 +1,24 @@
 from experiment_runner import ExperimentRunner
 import csv
 import logging
-import shutil
-import os
+from os.path import join
+from shutil import rmtree
+from os import makedirs
 
-logger = logging.getLogger("__main__")
+logger = logging.getLogger("modDig")
 
 
 class ExperimentReporter (ExperimentRunner):
 
     counter = 0
 
-    def __init__(self, definition):
+    def __init__(self, definition, directory):
         ExperimentRunner.__init__(self, definition)
-        shutil.rmtree("./out", ignore_errors=True)
-        os.mkdir("./out")
-        os.mkdir("./out/a")
-        os.mkdir("./out/b")
+        self.report_dir = directory
+        rmtree(join(directory, "a"), ignore_errors=True)
+        rmtree(join(directory, "b"), ignore_errors=True)
+        makedirs(join(directory, "a"))
+        makedirs(join(directory, "b"))
 
     def __iter__(self):
         return ExperimentRunner.__iter__(self)
@@ -29,13 +31,15 @@ class ExperimentReporter (ExperimentRunner):
         return data_a, data_b
 
     def _make_csv_report(self, data_a, data_b):
-        with open("./out/a/{}_ca.csv".format(self.counter), "wb") as out:
+        ca_file = join(self.report_dir, "a", "{}_ca.csv".format(self.counter))
+        with open(ca_file, "wb") as out:
             csv_out = csv.writer(out)
             csv_out.writerow(["x", "y"])
             for row in data_a:
                 csv_out.writerow(row)
 
-        with open("./out/b/{}_cb.csv".format(self.counter), "wb") as out:
+        cb_file = join(self.report_dir, "b", "{}_cb.csv".format(self.counter))
+        with open(cb_file, "wb") as out:
             csv_out = csv.writer(out)
             csv_out.writerow(["x", "y"])
             for row in data_b:

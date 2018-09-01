@@ -5,7 +5,7 @@ import logging
 
 logger = logging.getLogger("modDig")
 
-class Experiment(ExperimentData, ExperimentConfig):
+class   Experiment(ExperimentData, ExperimentConfig):
 
     def __init__(self, definition):
 
