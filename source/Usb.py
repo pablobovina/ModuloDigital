@@ -15,12 +15,11 @@ class Usb:
     read_delay = 500
     debug = True
     api = None
-    
 
     def __init__(self): 
         if not self.debug:
-            # api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ModuloDigital\\Microchip\\mpusbapi.dll")
-            api = ctypes.CDLL(".\\Microchip\\mpusbapi.dll")
+            # self.api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ModuloDigital\\Microchip\\mpusbapi.dll")
+            self.api = ctypes.CDLL(".\\Microchip\\mpusbapi.dll")
 
     def request(self, data, data_len):
         """

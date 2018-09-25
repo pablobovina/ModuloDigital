@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger("modDig")
 
+
 class ExperimentSecuence(Experiment):
 
     def __init__(self, definition):
@@ -14,21 +15,26 @@ class ExperimentSecuence(Experiment):
 
     def next(self):
         cpoints = Experiment.next(self)
-        pulse_secuence = ExperimentSecuence._translate(cpoints, Secuence(), 0, 0, 0, [], self.freq_dirs, self.phase_dirs)
+        pulse_secuence = ExperimentSecuence._translate(cpoints, Secuence(), 0, 0, 0, [], self.freq_dirs, self.phase_dirs, self.key_rf)
         logger.info("Generating pulse secuence")
         return pulse_secuence
 
     @staticmethod
-    def _translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs):
+    def _translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs, key_rf):
 
-        if counter >= len(cpoints):
+        if counter >= len(cpoints) and not loops:
             pulso_5 = "0000000000010000"
             secuence.cont(pulso_5, 2)
+            # aca va un continue extra con los datos de settings
+            # durante la adquisicion
             secuence.end()
             return secuence, demora
 
+        if counter >= len(cpoints) and loops:
+            raise Exception("secuencia mal formada: loops sin return")
+            
         if len(loops) > 4:
-            return False
+            raise Exception("secuencia mal formada: el numero de loops anidados es mayor a 4")
 
         lsb = cpoints[counter]["lsb"]
         msb = cpoints[counter]["msb"]
@@ -40,20 +46,20 @@ class ExperimentSecuence(Experiment):
             # carga fase en ram
             p_load_ram = ExperimentSecuence._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase,
                                                          freq_dirs=freq_dirs, phase_dirs=phase_dirs,
-                                                         load_ram="1")
+                                                         load_ram="1", key_rf=key_rf)
             demora_load_ram = 2
             secuence.cont(p_load_ram, demora_load_ram)
             ins += 1
             # carga fase en registro trabajo con pulso udlck
             p_udclk = ExperimentSecuence._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase,
                                                       freq_dirs=freq_dirs, phase_dirs=phase_dirs,
-                                                      load_ram="0", udclk="1")
+                                                      load_ram="0", udclk="1", key_rf=key_rf)
             demora_udclk = 2
             secuence.cont(p_udclk, demora_udclk)
             ins += 1
             # carga de la instruccion original
             p = ExperimentSecuence._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase,
-                                                freq_dirs=freq_dirs, phase_dirs=phase_dirs)
+                                                freq_dirs=freq_dirs, phase_dirs=phase_dirs, key_rf=key_rf)
             secuence.cont(p, time_cp)
             ins += 1
             # si pertenece a un loop acumulamos la demora ahi
@@ -66,16 +72,16 @@ class ExperimentSecuence(Experiment):
             else:
                 demora += time_cp + demora_load_ram + demora_udclk
             counter += 1
-            return ExperimentSecuence._translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs)
+            return ExperimentSecuence._translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs, key_rf)
 
         if cpoints[counter]["type"] == "R":
-            top_loop = loops.pop()
-            if not top_loop:
-                # un return in loop
-                return False
+            if len(loops):
+                top_loop = loops.pop()
+            else:
+                raise Exception("secuencia mal formada: instruccion return sin loop asociado")
 
             p = ExperimentSecuence._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase,
-                                                freq_dirs=freq_dirs, phase_dirs=phase_dirs)
+                                                freq_dirs=freq_dirs, phase_dirs=phase_dirs, key_rf=key_rf)
             data = top_loop["data"]
             lazo = top_loop["lazo"]
             secuence.retl(p, data, lazo, time_cp)
@@ -90,21 +96,21 @@ class ExperimentSecuence(Experiment):
             else:
                 demora += ((top_loop["demora"]) * top_loop["rep"])
             counter += 1
-            return ExperimentSecuence._translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs)
+            return ExperimentSecuence._translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs, key_rf)
 
         if cpoints[counter]["type"] == "L":
             n = cpoints[counter]["data"]
             lazo = len(loops)
             loops.append({"data": ins, "lazo": lazo, "demora": time_cp, "rep": n})
             p = ExperimentSecuence._get_pattern(pulsos=lsb + msb, freq=freq, phase=phase,
-                                                freq_dirs=freq_dirs, phase_dirs=phase_dirs)
+                                                freq_dirs=freq_dirs, phase_dirs=phase_dirs, key_rf=key_rf)
             secuence.lazo(p, n, lazo, demora)
             ins += 1
             counter += 1
-            return ExperimentSecuence._translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs)
+            return ExperimentSecuence._translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs, key_rf)
 
     @staticmethod
-    def _get_pattern(pulsos, freq, phase, freq_dirs, phase_dirs, load_ram="0", udclk="0", disparo_ad="0", pulso_test=None):
+    def _get_pattern(pulsos, freq, phase, freq_dirs, phase_dirs, load_ram="0", udclk="0", disparo_ad="0", key_rf=None):
         p = phase_dirs[phase]
         p_1 = "0" * (4 - len("{0:b}".format(p))) + "{0:b}".format(p)
         f = freq_dirs[freq]
@@ -113,7 +119,8 @@ class ExperimentSecuence(Experiment):
         # a  b    c  d  e  f    g    h   i   j k   l   m  n  o  p
         # 0  1    2  3  4  5    6    7   8   9 10  11  12 13 14 15
         s = pulsos[0:2] + p_1 + udclk + load_ram + f_1 + pulsos[9:11] + disparo_ad + pulsos[12:16]
-        if pulso_test:
-            s = pulso_test + pulsos[1:2] + p_1 + udclk + load_ram + f_1 + pulsos[9:11] + disparo_ad + pulsos[12:16]
+
+        if key_rf is not None:
+            s = s[0:key_rf-1] + "1" + s[key_rf:]
 
         return s

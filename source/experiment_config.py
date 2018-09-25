@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger("modDig")
 
+
 class ExperimentConfig:
 
     def __init__(self, freq_set, phase_set, bloq, inter_ts):
@@ -11,5 +12,6 @@ class ExperimentConfig:
         self.ad = Ad(bloqnum=bloq, inter_ts=inter_ts)
         self.freq_dirs = self.dds2.freq_table
         self.phase_dirs = self.dds2.phase_table
+        self.key_rf = 1
         logger.info("AD configurated")
         logger.info("DDS2 configurated")
