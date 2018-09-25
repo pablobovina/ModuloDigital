@@ -1,11 +1,8 @@
 from source.experiment_reporter import ExperimentReporter
 from source.experiment_scanner import ExperimentScanner
 from time import sleep
-from shutil import rmtree
-from os import makedirs
 from os.path import join
 from main_logger import MainLogger
-import logging
 
 
 class DryRun:
@@ -18,11 +15,6 @@ class DryRun:
         self.log_directory = parent.log_d
         self.logger = MainLogger(self.log_directory)
         self.terminate_now = False
-        # cleaning output and error dir
-        rmtree(self.out_directory, ignore_errors=True)
-        makedirs(self.out_directory)
-        rmtree(self.error_directory, ignore_errors=True)
-        makedirs(self.error_directory)
         self.max_time = 1
 
     def run(self):
@@ -40,12 +32,12 @@ class DryRun:
             with open(end_file, "wb") as out:
                 out.write("END RUN")
                 self.logger.info("END RUN")
+                out.close()
         except Exception as e:
-            rmtree(self.error_directory, ignore_errors=True)
-            makedirs(self.error_directory)
             error_file = join(self.error_directory, "error.log")
             with open(error_file, "wb") as out:
                 out.write(e.message.__str__())
+                out.close()
                 # log errors in console
                 for m in e.message.split(";"):
                     self.logger.console_error(m)

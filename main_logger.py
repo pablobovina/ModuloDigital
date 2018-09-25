@@ -1,17 +1,10 @@
 import logging
-from shutil import rmtree
-from os import makedirs
 from os.path import join
 
 
 class MainLogger:
 
     def __init__(self, log_directory):
-
-        # remove dirs
-        rmtree(log_directory, ignore_errors=True)
-        makedirs(log_directory)
-
         # create formatter
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -19,17 +12,6 @@ class MainLogger:
         logger = logging.getLogger("modDig")
 
         logger.setLevel(logging.DEBUG)
-
-        # TBD
-        # # create console handler and set level to debug
-        # ch = logging.StreamHandler()
-        # ch.setLevel(logging.DEBUG)
-        #
-        # # add formatter to ch
-        # ch.setFormatter(formatter)
-        #
-        # # add ch to logger
-        # logger.addHandler(ch)
 
         # file handler
         self.log_file_path = join(log_directory, "modDig.log")

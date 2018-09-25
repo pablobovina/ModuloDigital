@@ -1,34 +1,23 @@
 from source.experiment_reporter import ExperimentReporter
 from source.experiment_scanner import ExperimentScanner
 from time import sleep
-from shutil import rmtree
-from os import makedirs
 import threading
 from os.path import join
 from main_logger import MainLogger
-import logging
 
 
 class ModDig(threading.Thread):
 
     def __init__(self, parent=None):
+        threading.Thread.__init__(self)
         self.parent = parent
         self.d = parent.data
         self.out_directory = parent.out_d
         self.error_directory = parent.error_d
         self.log_directory = parent.log_d
-
-        threading.Thread.__init__(self)
-
         self.logger = MainLogger(self.log_directory)
         self.name = "ModDig-{}-{}".format(parent.user, parent.id_thread)
         self.terminate_now = False
-
-        # cleaning output and error dir
-        rmtree(self.out_directory, ignore_errors=True)
-        makedirs(self.out_directory)
-        rmtree(self.error_directory, ignore_errors=True)
-        makedirs(self.error_directory)
 
     def run(self):
         try:
