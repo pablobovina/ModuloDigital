@@ -2,6 +2,7 @@
 import ctypes
 from time import sleep
 import logging
+from setup import SetupModDig
 
 logger = logging.getLogger("modDig")
 
@@ -13,13 +14,16 @@ class Usb:
     selection = 0
     write_delay = 500
     read_delay = 500
-    debug = True
     api = None
+    debug = False
 
-    def __init__(self): 
+    def __init__(self):
+        self.debug = SetupModDig.debug
+        Usb.debug = SetupModDig.debug
+        # logger.info("USB DEBUG IS: {}".format(SetupModDig.debug))
         if not self.debug:
-            # self.api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ModuloDigital\\Microchip\\mpusbapi.dll")
-            self.api = ctypes.CDLL(".\\Microchip\\mpusbapi.dll")
+            self.api = ctypes.CDLL("C:\\Users\\pablo\\Downloads\\tesis\\repo\\ServerModuloDigital\\Server\\experiments\\ModuloDigital\\Microchip\\mpusbapi.dll")
+            # self.api = ctypes.CDLL(".\\Microchip\\mpusbapi.dll")
 
     def request(self, data, data_len):
         """
@@ -28,6 +32,7 @@ class Usb:
         data_len: number of bytes incoming in response
         """
         if self.debug:
+            # logger.info("fake request")
             return self.request_fake(data, data_len)
 
         if not self.api._MPUSBGetDeviceCount(self.vid):

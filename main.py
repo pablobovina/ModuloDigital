@@ -4,6 +4,7 @@ from time import sleep
 import threading
 from os.path import join
 from main_logger import MainLogger
+from source.setup import SetupModDig
 
 
 class ModDig(threading.Thread):
@@ -18,6 +19,7 @@ class ModDig(threading.Thread):
         self.logger = MainLogger(self.log_directory)
         self.name = "ModDig-{}-{}".format(parent.user, parent.id_thread)
         self.terminate_now = False
+        SetupModDig(debug=False)
 
     def run(self):
         try:

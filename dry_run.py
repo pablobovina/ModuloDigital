@@ -3,6 +3,7 @@ from source.experiment_scanner import ExperimentScanner
 from time import sleep
 from os.path import join
 from main_logger import MainLogger
+from source.setup import SetupModDig
 
 
 class DryRun:
@@ -16,6 +17,7 @@ class DryRun:
         self.logger = MainLogger(self.log_directory)
         self.terminate_now = False
         self.max_time = 1
+        SetupModDig(debug=True)
 
     def run(self):
         try:
@@ -30,8 +32,8 @@ class DryRun:
                     break
             end_file = join(self.out_directory, "end.txt")
             with open(end_file, "wb") as out:
-                out.write("END RUN")
-                self.logger.info("END RUN")
+                out.write("END DRY RUN")
+                self.logger.info("END DRY RUN")
                 out.close()
         except Exception as e:
             error_file = join(self.error_directory, "error.log")
