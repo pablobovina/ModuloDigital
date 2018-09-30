@@ -11,11 +11,15 @@ class MainLogger:
         # create logger
         logger = logging.getLogger("modDig")
 
+        for h in logger.handlers:
+            logger.removeHandler(h)
+
+        self.log_file_path = join(log_directory, "modDig.log")
+
         logger.setLevel(logging.DEBUG)
 
         # file handler
-        self.log_file_path = join(log_directory, "modDig.log")
-        fh = logging.FileHandler(self.log_file_path, mode='w')
+        fh = logging.FileHandler(self.log_file_path, mode='a')
         fh.setLevel(logging.DEBUG)
         fh.setFormatter(formatter)
 
