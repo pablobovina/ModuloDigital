@@ -86,7 +86,6 @@ class Ad(object):
         return
 
     def read_channels(self):
-        self._wait_convertion()
         self._reset10()
         self._reset00()
         self._execute()
@@ -168,7 +167,7 @@ class Ad(object):
         return ca, cb
 
     def _execute(self):
-        """ejecutar pila de instucciones del AD"""
+        """ejecutar pila de instucciones del ad"""
         data = self.interfaz.execute(self.delay, self.cmd)
         self.cmd = []
         return data
@@ -183,9 +182,11 @@ class Ad(object):
             return True
 
         while intentos < self.amount:
-            response = self.interfaz.request(op, 4)
+            self.interfaz.request_write(op)
+            response = self.interfaz.request_read(4)
             if ord(response.value[0]) & 0x01:
                 flag = True
+                logger.info("Flag AD: True")
                 break
             else:
                 intentos += 1

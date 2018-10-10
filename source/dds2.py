@@ -223,6 +223,5 @@ class Dds2(object):
     def _execute(self):
         """ejecutar pila de instucciones del dds2"""
         data = self.interfaz.execute(self.delay, self.cmd)
-        # limpio comandos a enviar
         self.cmd = []
         return data

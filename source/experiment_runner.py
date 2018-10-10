@@ -4,6 +4,7 @@ import logging
 
 logger = logging.getLogger("modDig")
 
+
 class ExperimentRunner (ExperimentSecuence):
 
     def __init__(self, definition):
@@ -16,8 +17,11 @@ class ExperimentRunner (ExperimentSecuence):
     def next(self):
         secuence, duration = ExperimentSecuence.next(self)
         self.pp2.upload_program(secuence)
+        logger.info("Uploaded Program PP2")
         self.pp2.trigger_program()
+        logger.info("Triggered Program PP2")
         self.pp2.wait_end_run()
+        logger.info("Finished run PP2")
         self.ad.read_channels()
-        logger.info("Retrieving data from AD")
+        logger.info("Already data from AD")
         return self.ad.data_a, self.ad.data_b
