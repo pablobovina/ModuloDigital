@@ -16,6 +16,7 @@ class ExperimentRunner (ExperimentSecuence):
 
     def next(self):
         secuence, duration = ExperimentSecuence.next(self)
+        logger.info("Generated pulse secuence {} ns".format(duration))
         self.pp2.upload_program(secuence)
         logger.info("Uploaded Program PP2")
         self.pp2.trigger_program()
