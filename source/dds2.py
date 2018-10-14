@@ -130,7 +130,7 @@ class Dds2(object):
         self._execute()
         return True
 
-    def _deactivate(self):
+    def deactivate(self):
         """desactivar el dds2"""
 
         # modo PC

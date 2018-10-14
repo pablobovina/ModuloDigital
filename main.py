@@ -22,22 +22,36 @@ class ModDig(threading.Thread):
         SetupModDig(debug=False)
 
     def run(self):
+        experiment_rep = None
+        experiment_scn = None
         try:
             experiment_scn = ExperimentScanner(self.d)
             experiment_rep = ExperimentReporter(experiment_scn, self.out_directory)
             for exp in experiment_rep:
                 if self.terminate_now:
+                    # shut down pp2 and dds2
+                    experiment_rep.dds2.deactivate()
+                    experiment_rep.pp2.reset()
+                    self.logger.info("Killed by manager 1 second sleep for dds2 and pp2 shut down ...")
+                    sleep(1)
                     raise Exception("killed by manager")
                 self.parent.on_partial(exp)
                 self.parent.on_log(self.logger.get_log_lines())
                 sleep(0)
                 pass
 
+            # shut down pp2 and dds2
+            experiment_rep.dds2.deactivate()
+            experiment_rep.pp2.reset()
+            self.logger.info("End run and shut down pp2 and dds2 1 second sleep ...")
+            sleep(1)
+
             end_file = join(self.out_directory, "end.txt")
             with open(end_file, "wb") as out:
                 out.write("END RUN")
                 self.logger.info("END RUN")
             self.parent.on_finish(self.logger.get_log_lines())
+
         except Exception as e:
             if not self.terminate_now:
                 self.parent.on_error(e.message, self.logger.get_log_lines())
@@ -49,6 +63,13 @@ class ModDig(threading.Thread):
             # log errors in console
             for m in e.message.split(";"):
                 self.logger.console_error(m)
+
+            # shut down pp2 and dds2
+            if experiment_rep:
+                experiment_rep.dds2.deactivate()
+                experiment_rep.pp2.reset()
+                self.logger.info("Error ocurred 1 second sleep for dds2 and pp2 shut down ...")
+                sleep(1)
 
 
 if __name__ == "__main__":

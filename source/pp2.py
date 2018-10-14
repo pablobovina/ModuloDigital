@@ -87,3 +87,9 @@ class Pp2(object):
         data = self.interfaz.execute(self.delay, self.cmd)
         self.cmd = []
         return data
+
+    def reset(self):
+        # reset pp2
+        self.cmd.append((['R', chr(0x50), chr(0x02)], 4))
+        self._execute()
+        return True
