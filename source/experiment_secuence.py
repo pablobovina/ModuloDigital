@@ -29,9 +29,6 @@ class ExperimentSecuence(Experiment):
         if counter >= len(cpoints) and loops:
             raise Exception("secuencia mal formada: loops sin return")
             
-        if len(loops) > 4:
-            raise Exception("secuencia mal formada: el numero de loops anidados es mayor a 4")
-
         lsb = cpoints[counter]["lsb"]
         msb = cpoints[counter]["msb"]
         time_cp = cpoints[counter]["time"]
@@ -103,6 +100,10 @@ class ExperimentSecuence(Experiment):
             secuence.lazo(p, n, lazo, demora)
             ins += 1
             counter += 1
+
+            if len(loops) > 4:
+                raise Exception("secuencia mal formada: el numero de loops anidados es mayor a 4")
+
             return ExperimentSecuence._translate(cpoints, secuence, demora, counter, ins, loops, freq_dirs, phase_dirs)
 
     @staticmethod
