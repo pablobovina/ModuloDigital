@@ -24,7 +24,7 @@ class ExperimentSecuence(Experiment):
 
         if counter >= len(cpoints) and not loops:
             secuence.end()
-            final_time = (demora*40.)/(10**9) + 0.001
+            final_time = (demora*40.)/(10**9)
             return secuence, final_time
 
         if counter >= len(cpoints) and loops:
