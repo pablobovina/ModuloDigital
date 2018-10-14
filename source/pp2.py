@@ -87,24 +87,3 @@ class Pp2(object):
         data = self.interfaz.execute(self.delay, self.cmd)
         self.cmd = []
         return data
-
-    def wait_end_run(self):
-        """generalizar usando execute until"""
-        intentos = 0
-        flag = False
-
-        if self.interfaz.debug:
-            return True
-
-        op = ['E', chr(0x50), chr(0x00)]
-        while intentos < self.amount:
-            self.interfaz.request_write(op)
-            response = self.interfaz.request_read(4)
-            if ord(response.value[0]) & 0x01:
-                flag = True
-                logger.info("Flag PP2: True")
-                break
-            else:
-                intentos += 1
-                sleep(self.delay)
-        return flag

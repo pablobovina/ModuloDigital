@@ -171,24 +171,3 @@ class Ad(object):
         data = self.interfaz.execute(self.delay, self.cmd)
         self.cmd = []
         return data
-
-    def _wait_convertion(self):
-        """generalizar usando execute until"""
-        intentos = 0
-        flag = False
-        op = ['S', chr(0x0b), chr(0x00)]
-
-        if self.interfaz.debug:
-            return True
-
-        while intentos < self.amount:
-            self.interfaz.request_write(op)
-            response = self.interfaz.request_read(4)
-            if ord(response.value[0]) & 0x01:
-                flag = True
-                logger.info("Flag AD: True")
-                break
-            else:
-                intentos += 1
-                sleep(self.delay)
-        return flag

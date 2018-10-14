@@ -24,7 +24,8 @@ class ExperimentSecuence(Experiment):
 
         if counter >= len(cpoints) and not loops:
             secuence.end()
-            return secuence, demora
+            final_time = (demora*40.)/(10**9) + 0.001
+            return secuence, final_time
 
         if counter >= len(cpoints) and loops:
             raise Exception("secuencia mal formada: loops sin return")
