@@ -65,7 +65,8 @@ class ExperimentScanner:
         for e in d["cpoints"]:
             # check cpoints
             try:
-                e["time"] = ExperimentScanner._time_to_ns(float(e["time"]), e["t_unit"], 40, errors, counter)
+                e["time"] = [ExperimentScanner._time_to_ns(float(s.strip()), e["t_unit"], 40, errors, counter)
+                             for s in e["time"].split(",")]
             except Exception as ex:
                 errors.append("cpoint {} con demora {} error {}".format(counter, e["time"], ex.message))
 

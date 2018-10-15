@@ -32,7 +32,7 @@ class ExperimentSecuence(Experiment):
             
         lsb = cpoints[counter]["lsb"]
         msb = cpoints[counter]["msb"]
-        time_cp = cpoints[counter]["time"]
+        time_cp = cpoints[counter]["time"][0]
         freq = cpoints[counter]["freq"]
         phase = cpoints[counter]["phase"][0]
 
