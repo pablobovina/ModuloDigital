@@ -1,8 +1,10 @@
 from experiment_secuence import ExperimentSecuence
 from pp2 import Pp2
 import logging
+from time import sleep
 
 logger = logging.getLogger("modDig")
+
 
 class ExperimentRunner (ExperimentSecuence):
 
@@ -15,9 +17,13 @@ class ExperimentRunner (ExperimentSecuence):
 
     def next(self):
         secuence, duration = ExperimentSecuence.next(self)
+        logger.info("Generated pulse secuence {} seconds".format(duration))
         self.pp2.upload_program(secuence)
+        logger.info("Uploaded Program PP2")
         self.pp2.trigger_program()
-        self.pp2.wait_end_run()
+        logger.info("Triggered Program PP2")
+        sleep(duration)
+        logger.info("Finished run PP2")
         self.ad.read_channels()
-        logger.info("Retrieving data from AD")
+        logger.info("Already data from AD")
         return self.ad.data_a, self.ad.data_b

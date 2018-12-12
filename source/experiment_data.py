@@ -29,6 +29,7 @@ class ExperimentData:
         if self.repeat > 1:
             for cpoint in self.cpoints:
                 ExperimentData._shift_phase_list(cpoint)
+                ExperimentData._shift_time_list(cpoint)
             self.repeat -= 1
             return self.cpoints
         if self.repeat <= 0:
@@ -51,3 +52,9 @@ class ExperimentData:
         if not (cpoints and isinstance(cpoints, list)):
             errors.append("cpoints debe ser un una lista no vacia de instrucciones")
         return
+
+    @staticmethod
+    def _shift_time_list(cpoint):
+        time_list = cpoint["time"]
+        cpoint["time"] = time_list[1:] + time_list[:1]
+        return cpoint

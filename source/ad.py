@@ -86,7 +86,6 @@ class Ad(object):
         return
 
     def read_channels(self):
-        self._wait_convertion()
         self._reset10()
         self._reset00()
         self._execute()
@@ -168,26 +167,7 @@ class Ad(object):
         return ca, cb
 
     def _execute(self):
-        """ejecutar pila de instucciones del AD"""
+        """ejecutar pila de instucciones del ad"""
         data = self.interfaz.execute(self.delay, self.cmd)
         self.cmd = []
         return data
-
-    def _wait_convertion(self):
-        """generalizar usando execute until"""
-        intentos = 0
-        flag = False
-        op = ['S', chr(0x0b), chr(0x00)]
-
-        if self.interfaz.debug:
-            return True
-
-        while intentos < self.amount:
-            response = self.interfaz.request(op, 4)
-            if ord(response.value[0]) & 0x01:
-                flag = True
-                break
-            else:
-                intentos += 1
-                sleep(self.delay)
-        return flag

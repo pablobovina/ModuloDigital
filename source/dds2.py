@@ -21,7 +21,8 @@ class Dds2(object):
             :type freq: set
             :type phase: set
         """
-
+        # zero freq handled by user, not stored
+        freq.remove(0)
         errors = []
 
         self._check_mod_id(mod_id, errors)
@@ -74,7 +75,7 @@ class Dds2(object):
         if not len(freq):
             errors.append("no hay frecuencias para almacenar")
 
-        if not (1 <= len(freq) <= 2):
+        if len(freq) > 2:
             errors.append("hay mas de 2 frecuencias para almacenar")
 
         for f in freq:
@@ -130,7 +131,7 @@ class Dds2(object):
         self._execute()
         return True
 
-    def _deactivate(self):
+    def deactivate(self):
         """desactivar el dds2"""
 
         # modo PC
@@ -223,6 +224,5 @@ class Dds2(object):
     def _execute(self):
         """ejecutar pila de instucciones del dds2"""
         data = self.interfaz.execute(self.delay, self.cmd)
-        # limpio comandos a enviar
         self.cmd = []
         return data

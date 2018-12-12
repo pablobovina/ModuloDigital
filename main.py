@@ -22,6 +22,7 @@ class ModDig(threading.Thread):
         SetupModDig(debug=False)
 
     def run(self):
+        experiment_rep = None
         try:
             experiment_scn = ExperimentScanner(self.d)
             experiment_rep = ExperimentReporter(experiment_scn, self.out_directory)
@@ -33,11 +34,17 @@ class ModDig(threading.Thread):
                 sleep(0)
                 pass
 
+            # shut down pp2 and dds2
+            experiment_rep.dds2.deactivate()
+            experiment_rep.pp2.reset()
+
+            # mark end run
             end_file = join(self.out_directory, "end.txt")
             with open(end_file, "wb") as out:
                 out.write("END RUN")
                 self.logger.info("END RUN")
             self.parent.on_finish(self.logger.get_log_lines())
+
         except Exception as e:
             if not self.terminate_now:
                 self.parent.on_error(e.message, self.logger.get_log_lines())
@@ -49,6 +56,11 @@ class ModDig(threading.Thread):
             # log errors in console
             for m in e.message.split(";"):
                 self.logger.console_error(m)
+
+            # shut down pp2 and dds2
+            if experiment_rep:
+                experiment_rep.dds2.deactivate()
+                experiment_rep.pp2.reset()
 
 
 if __name__ == "__main__":
