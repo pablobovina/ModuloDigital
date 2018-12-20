@@ -2,6 +2,7 @@ from experiment_secuence import ExperimentSecuence
 from pp2 import Pp2
 import logging
 from time import sleep
+from setup import SetupModDig
 
 logger = logging.getLogger("modDig")
 
@@ -22,7 +23,11 @@ class ExperimentRunner (ExperimentSecuence):
         logger.info("Uploaded Program PP2")
         self.pp2.trigger_program()
         logger.info("Triggered Program PP2")
-        sleep(duration)
+        if not SetupModDig.debug:
+            sleep(duration)
+        else:
+            logger.info("modo simulado no hay sleep inermedio")
+
         logger.info("Finished run PP2")
         self.ad.read_channels()
         logger.info("Already data from AD")
