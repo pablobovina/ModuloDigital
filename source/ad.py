@@ -74,8 +74,8 @@ class Ad(object):
 
     @staticmethod
     def _check_inter_ts(inter_ts, errors=None):
-        if not (100 <= inter_ts <= 254000 and isinstance(inter_ts, int)):
-            errors.append("inter_ts debe entero en nanosegundos [100, 254000]")
+        if not (100 <= inter_ts <= 25400 and isinstance(inter_ts, int)):
+            errors.append("inter_ts debe entero en nanosegundos [100, 25400]")
         return
 
     def _configure(self):
